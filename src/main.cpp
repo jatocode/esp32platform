@@ -4,6 +4,7 @@
 #include "esp32platform_eeprom.h"
 #include "esp32platform_ota.h"
 #include "esp32platform_wifi.h"
+#include "esp32platform_mqtt.h"
 
 // Starta en webserver
 WiFiServer server(80);
@@ -29,7 +30,7 @@ void setup() {
     if (connected) {
         Serial.print("Connected to wifi: ");
         Serial.println(savedSSID);
-        // setupMQTT();
+        setupMQTT();
     } else {
         // Start Access Point
         Serial.println("Setting up access point");
@@ -45,11 +46,11 @@ void setup() {
 
 void loop() {
     if (connected) {
-        // if (!mqttClient.connected()) {
-        //     Serial.println("Reconnecting mqttClient");
-        //     reconnect();
-        // }
-        // mqttClient.loop();  // Loopar inte, ska bara köras i loopen
+        if (!mqttClient.connected()) {
+            Serial.println("Reconnecting mqttClient");
+            reconnectMQTT();
+        }
+        mqttClient.loop();  // Loopar inte, ska bara köras i loopen
     } else {
         // Captive portal. Give our IP to everything
         dnsServer.processNextRequest();
