@@ -1,14 +1,10 @@
-#include <WiFi.h>
-#include <WiFiClient.h>
-#include <PubSubClient.h>
+#include "esp32platform_mqtt.h"
 
 const char *CLIENTID = "ESP32Platform-";
 const char *TOPIC = "esp32platform/status";
 const char *TOPIC_IN = "esp32platform/#";
 
 const char *mqtt_server = "192.168.68.108";
-WiFiClient espClient;
-PubSubClient mqttClient(espClient);
 
 void mqttCallback(char *topic, byte *message, unsigned int length) {
     String messageTemp;
