@@ -11,6 +11,7 @@
 WiFiServer server(80);
 PubSubClient mqttClient;
 DNSServer dnsServer;
+void wifiAndHttp();
 
 // wifi connection status
 bool connected = false;
@@ -53,6 +54,21 @@ void setup() {
 }
 
 void loop() {
+    // Hantera allt med nätet
+    wifiAndHttp();
+
+    // Gör något
+
+    // Visa att vi lever
+    if (millis() - last_blink > 1000) {
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(100);
+        digitalWrite(LED_BUILTIN, HIGH);
+        last_blink = millis();
+    }
+}
+
+void wifiAndHttp() {
     if (connected) {
         if (!mqttClient.connected()) {
             Serial.println("Reconnecting mqttClient");
@@ -76,13 +92,5 @@ void loop() {
         if(connected) {
             SSIDPwdToEeprom(ssidpwd.ssid, ssidpwd.pass);
         }
-    }
-
-    // Visa att vi lever
-    if (millis() - last_blink > 1000) {
-        digitalWrite(LED_BUILTIN, LOW);
-        delay(100);
-        digitalWrite(LED_BUILTIN, HIGH);
-        last_blink = millis();
     }
 }
