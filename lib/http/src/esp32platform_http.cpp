@@ -26,8 +26,42 @@ void writeAPResponse(WiFiClient client, String networks) {
     Serial.println("Wrote AP response to client");
 }
 
-void handleHttp(WiFiServer server, bool connected, String networks) {
+void writeRedirectHeader(WiFiClient client, String redirectUrl) {
+    Serial.println("Redirecting to " + redirectUrl);
+    client.println("HTTP/1.1 301 Moved Permanently");
+    client.println("Content-type:text/html");
+    client.print("Location: ");
+    client.println(redirectUrl);
+    client.println();
+    client.println();
+}
+
+struct ssid_pass connectionRequest(String params) {
+    struct ssid_pass ssidpwd;
+    Serial.println(params);
+    // Parse parameters by finding =
+    // Format is: C?ssid=SSID&p=PASSWORD
+    int i = params.indexOf('=', 0);
+    int i2 = params.indexOf('&', 0);
+    String ssid = params.substring(i + 1, i2);
+    ssid.replace('+', ' ');  // remove html encoding
+
+    i = params.indexOf('=', i2);
+    String pass = params.substring(i + 1);
+
+    Serial.println(ssid);
+    Serial.println(pass);
+
+    ssidpwd.ssid = ssid;
+    ssidpwd.pass = pass;
+
+    return ssidpwd;
+}
+
+int handleHttp(WiFiServer server, bool connected, String networks, struct ssid_pass *ssidpwd) {
     WiFiClient client = server.available();
+
+    int status = 0;
 
     if (client) {
         String currentLine = "";
@@ -51,7 +85,8 @@ void handleHttp(WiFiServer server, bool connected, String networks) {
                         if (currentLine.startsWith("GET")) {
                             // Trim to make cleaner switch
                             // GET /xxxx HTTP/1.1
-                            String path = currentLine.substring(5, currentLine.length() - 9);
+                            String path = currentLine.substring(
+                                5, currentLine.length() - 9);
                             switch (path[0]) {
                                 case 'A':
                                     Serial.println("I'm doing a thing");
@@ -61,6 +96,10 @@ void handleHttp(WiFiServer server, bool connected, String networks) {
                                     client.println();
                                     client.println();
                                     client.stop();
+                                    break;
+                                case 'C':
+                                    *ssidpwd = connectionRequest(path);
+                                    status = 1;
                                     break;
                                 default:
                                     break;
@@ -75,4 +114,6 @@ void handleHttp(WiFiServer server, bool connected, String networks) {
         }
         client.stop();
     }
+    
+    return status;
 }

@@ -2,6 +2,11 @@
 #include <WiFiServer.h>
 #include <WiFi.h>
 
+struct ssid_pass {
+    String ssid;
+    String pass;
+};
+
 const String mainHtmlOutput =
     "<!DOCTYPE html><html><head>		<title>ESP32</title>	"
     "	<link rel=\"stylesheet\" "
@@ -45,4 +50,4 @@ const String apHtmlOutput =
 void writeOkHeader(WiFiClient client);
 void writeMainResponse(WiFiClient client);
 void writeAPResponse(WiFiClient client, String networks);
-void handleHttp(WiFiServer server, bool connected, String networks);
+int handleHttp(WiFiServer server, bool connected, String networks, struct ssid_pass *ssidpwd);

@@ -19,6 +19,7 @@ bool connected = false;
 String networks = "";
 
 int last_blink = 0;
+struct ssid_pass ssidpwd;
 
 void setup() {
     Serial.begin(115200);
@@ -68,7 +69,10 @@ void loop() {
 
     ArduinoOTA.handle();
 
-    handleHttp(server, connected, networks);
+    int status = handleHttp(server, connected, networks, &ssidpwd);
+    if(status == 1) {
+        connected = connectWifi(ssidpwd.ssid, ssidpwd.pass);  
+    }
 
     // Visa att vi lever
     if (millis() - last_blink > 1000) {
