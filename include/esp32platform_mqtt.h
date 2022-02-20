@@ -39,6 +39,14 @@ void reconnectMQTT() {
     }
 }
 
+void pubmqttstatus(String key, String msg, String card) {
+    String status =
+        "{\"" + key + "\":\"" + msg + "\",\"card\":\"" + card + "\"}";
+    char a[100];
+    status.toCharArray(a, status.length() + 1);
+    mqttClient.publish("esp32platform/status", a, false);
+}
+
 void setupMQTT() {
     Serial.println("Configuring MQTT server");
     mqttClient.setServer(mqtt_server, 1883);
