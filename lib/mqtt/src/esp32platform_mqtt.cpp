@@ -19,7 +19,7 @@ void mqttCallback(char *topic, byte *message, unsigned int length) {
     }
 }
 
-void reconnectMQTT() {
+void reconnectMQTT(PubSubClient mqttClient) {
     while (!mqttClient.connected()) {
         Serial.print("Attempting MQTT connection...");
         String clientId = CLIENTID;
@@ -39,7 +39,7 @@ void reconnectMQTT() {
     }
 }
 
-void pubmqttstatus(String key, String msg, String card) {
+void pubmqttstatus(PubSubClient mqttClient, String key, String msg, String card) {
     String status =
         "{\"" + key + "\":\"" + msg + "\",\"card\":\"" + card + "\"}";
     char a[100];
@@ -48,8 +48,13 @@ void pubmqttstatus(String key, String msg, String card) {
     mqttClient.publish(TOPIC, a, false);
 }
 
-void setupMQTT() {
+PubSubClient setupMQTT() {
+    WiFiClient client;
+    PubSubClient mqttClient(client);
+
     Serial.println("Configuring MQTT server");
     mqttClient.setServer(mqtt_server, 1883);
     mqttClient.setCallback(mqttCallback);
+
+    return mqttClient;
 }

@@ -15,6 +15,7 @@ bool connected = false;
 
 // Lista av nätverk
 String networks = "";
+PubSubClient mqttClient;
 
 void setup() {
     Serial.begin(115200);
@@ -31,7 +32,7 @@ void setup() {
     if (connected) {
         Serial.print("Connected to wifi: ");
         Serial.println(savedSSID);
-        setupMQTT();
+        mqttClient = setupMQTT();
     } else {
         // Start Access Point
         Serial.println("Setting up access point");
@@ -49,7 +50,7 @@ void loop() {
     if (connected) {
         if (!mqttClient.connected()) {
             Serial.println("Reconnecting mqttClient");
-            reconnectMQTT();
+            reconnectMQTT(mqttClient);
         }
 
         mqttClient.loop();  // Loopar inte, ska bara köras i loopen
