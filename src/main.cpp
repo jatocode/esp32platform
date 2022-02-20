@@ -1,15 +1,17 @@
 #include <Arduino.h>
 #include "esp32platform_eeprom.h"
+#include "esp32platform_ota.h"
 
 void setup() {
     Serial.begin(115200);
     Serial.println();
 
     startEeprom();
-    String SSIDFromEeprom = SSIDFromEeprom();
-    String PwdFromEeprom = PwdFromEeprom();
+    startOTA();
 
-    
+    String savedSSID = SSIDFromEeprom();
+    String savedPASS = PwdFromEeprom();
+
 }
 
 void loop() {

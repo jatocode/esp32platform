@@ -44,7 +44,7 @@ String SSIDFromEeprom() {
     return SSIDFromEeprom;
 }
 
-String savedPassword() {
+String PwdFromEeprom() {
     String PwdFromEeprom = "";
     PwdFromEeprom = readStringEEPROM(EEPROM_PASS);
     Serial.println(PwdFromEeprom);
