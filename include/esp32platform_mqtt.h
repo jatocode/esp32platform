@@ -1,8 +1,10 @@
+#include <WiFi.h>
 #include <WiFiClient.h>
 #include <PubSubClient.h>
 
 const char *CLIENTID = "ESP32Platform-";
-const char *TOPIC = "esp32platform/info";
+const char *TOPIC = "esp32platform/status";
+const char *TOPIC_IN = "esp32platform/#";
 
 const char *mqtt_server = "192.168.68.108";
 WiFiClient espClient;
@@ -28,8 +30,10 @@ void reconnectMQTT() {
         clientId += String(random(0xffff), HEX);
         if (mqttClient.connect(clientId.c_str())) {
             Serial.println("mqtt connected");
-            mqttClient.publish(TOPIC, "{\"message\":\"I'm alive\"}");
-            mqttClient.subscribe("esp32platform/#");
+            String ipaddress = WiFi.localIP().toString();
+            String status = "{\"message\":\"I'm alive\", \"ip\":" + ipaddress + "}";
+            mqttClient.publish(TOPIC, status.c_str());
+            mqttClient.subscribe(TOPIC_IN);
         } else {
             Serial.print("failed, rc=");
             Serial.print(mqttClient.state());
@@ -44,7 +48,8 @@ void pubmqttstatus(String key, String msg, String card) {
         "{\"" + key + "\":\"" + msg + "\",\"card\":\"" + card + "\"}";
     char a[100];
     status.toCharArray(a, status.length() + 1);
-    mqttClient.publish("esp32platform/status", a, false);
+    
+    mqttClient.publish(TOPIC, a, false);
 }
 
 void setupMQTT() {

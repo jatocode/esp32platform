@@ -53,12 +53,14 @@ void loop() {
         }
 
         mqttClient.loop();  // Loopar inte, ska bara köras i loopen
-        
-        ArduinoOTA.handle();
-        handleHttp(server, connected, "10.1.1.1", networks);
 
     } else {
         // Captive portal. Give our IP to everything
+        networks = findNetworksNearby();
         dnsServer.processNextRequest();
     }
+
+    ArduinoOTA.handle();
+
+    handleHttp(server, connected, networks);
 }

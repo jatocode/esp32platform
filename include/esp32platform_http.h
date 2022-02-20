@@ -1,5 +1,6 @@
 #include <WiFiClient.h>
 #include <WiFiServer.h>
+#include <WiFi.h>
 
 const String mainHtmlOutput =
     "<!DOCTYPE html><html><head>		<title>ESP32</title>	"
@@ -47,8 +48,9 @@ void writeOkHeader(WiFiClient client) {
     client.println();
 }
 
-void writeMainResponse(WiFiClient client, String ipaddress) {
+void writeMainResponse(WiFiClient client) {
     writeOkHeader(client);
+    String ipaddress = WiFi.localIP().toString();
     String htmlParsed = mainHtmlOutput;
     htmlParsed.replace("%WIFI%", ipaddress);
     htmlParsed.replace("%WAVE%", "not in use");
@@ -66,7 +68,7 @@ void writeAPResponse(WiFiClient client, String networks) {
     Serial.println("Wrote AP response to client");
 }
 
-void handleHttp(WiFiServer server, bool connected, String ipaddress, String networks) {
+void handleHttp(WiFiServer server, bool connected, String networks) {
     WiFiClient client = server.available();
 
     if (client) {
@@ -81,7 +83,7 @@ void handleHttp(WiFiServer server, bool connected, String ipaddress, String netw
                     if (currentLine.length() == 0) {
                         if (connected) {
                             // Connected to WiFi. Respond with main page
-                            writeMainResponse(client, ipaddress);
+                            writeMainResponse(client);
                         } else {
                             // Access point. Respond with wifi-select page
                             writeAPResponse(client, networks);
