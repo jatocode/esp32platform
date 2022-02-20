@@ -9,13 +9,14 @@
 
 // Starta en webserver
 WiFiServer server(80);
+PubSubClient mqttClient;
+DNSServer dnsServer;
 
 // wifi connection status
 bool connected = false;
 
 // Lista av nätverk
 String networks = "";
-PubSubClient mqttClient;
 
 void setup() {
     Serial.begin(115200);
@@ -39,7 +40,7 @@ void setup() {
 
         WiFi.disconnect();
         networks = findNetworksNearby();
-        setupAP();
+        dnsServer = setupAP();
     }
 
     server.begin();

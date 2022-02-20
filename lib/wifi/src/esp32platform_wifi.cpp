@@ -1,5 +1,14 @@
 #include "esp32platform_wifi.h"
 
+// Används för AP
+const char *ssid = "esp32platform";
+const char *password = "supersecret";
+
+// MDSN namnet på nätverket
+const char *mdnsname = "esp32platform";
+
+String ipaddress = "";
+
 bool connectWifi(String ssid, String pass) {
     char ssidA[100];
     char passA[100];
@@ -38,7 +47,7 @@ bool connectWifi(String ssid, String pass) {
     return true;
 }
 
-void setupAP() {
+DNSServer setupAP() {
     const byte DNS_PORT = 53;
 
     IPAddress local_IP(10, 0, 1, 1);
@@ -51,12 +60,16 @@ void setupAP() {
     //    WiFi.softAP(ssid, password); // Using pwd
     WiFi.softAP(ssid);  // Not using pwd
 
+    DNSServer dnsServer;
+
     dnsServer.start(DNS_PORT, "*", local_IP);
 
     IPAddress myIP = WiFi.softAPIP();
     ipaddress = myIP.toString();
     Serial.println("AP ssid:" + String(ssid));
     Serial.println("AP IP address: " + ipaddress);
+
+    return dnsServer;
 }
 
 String findNetworksNearby() {
