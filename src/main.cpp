@@ -70,8 +70,12 @@ void loop() {
     ArduinoOTA.handle();
 
     int status = handleHttp(server, connected, networks, &ssidpwd);
-    if(status == 1) {
+    if(status == REQUEST_RECONNECT) {
         connected = connectWifi(ssidpwd.ssid, ssidpwd.pass);  
+
+        if(connected) {
+            SSIDPwdToEeprom(ssidpwd.ssid, ssidpwd.pass);
+        }
     }
 
     // Visa att vi lever

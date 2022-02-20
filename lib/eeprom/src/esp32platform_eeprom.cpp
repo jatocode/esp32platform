@@ -45,6 +45,18 @@ String PwdFromEeprom() {
     return PwdFromEeprom;
 }
 
+void SSIDPwdToEeprom(String ssid, String pass) {
+        String savedSSID = SSIDFromEeprom();
+        String savedPass = PwdFromEeprom();
+
+        if (ssid != savedSSID || pass != savedPass) {
+        // Wifi config has changed, write working to EEPROM
+        Serial.println("Writing Wifi config to EEPROM");
+        writeStringEEPROM(EEPROM_SSID, ssid);
+        writeStringEEPROM(EEPROM_PASS, pass);
+    }
+}
+
 void startEeprom() {
     Serial.println("Reading settings from EEPROM");
     EEPROM.begin(EEPROM_SIZE);

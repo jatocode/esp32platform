@@ -11,5 +11,6 @@ void writeStringEEPROM(char add, String data);
 String readStringEEPROM(char add);
 String SSIDFromEeprom();
 String PwdFromEeprom();
+void SSIDPwdToEeprom(String ssid, String pass);
 
 void startEeprom();

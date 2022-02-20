@@ -61,7 +61,7 @@ struct ssid_pass connectionRequest(String params) {
 int handleHttp(WiFiServer server, bool connected, String networks, struct ssid_pass *ssidpwd) {
     WiFiClient client = server.available();
 
-    int status = 0;
+    int status = REQUEST_OK;
 
     if (client) {
         String currentLine = "";
@@ -99,7 +99,7 @@ int handleHttp(WiFiServer server, bool connected, String networks, struct ssid_p
                                     break;
                                 case 'C':
                                     *ssidpwd = connectionRequest(path);
-                                    status = 1;
+                                    status = REQUEST_RECONNECT;
                                     break;
                                 default:
                                     break;

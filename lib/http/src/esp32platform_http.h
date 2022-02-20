@@ -2,6 +2,9 @@
 #include <WiFiServer.h>
 #include <WiFi.h>
 
+#define REQUEST_OK 0
+#define REQUEST_RECONNECT 1
+
 struct ssid_pass {
     String ssid;
     String pass;
