@@ -18,9 +18,13 @@ bool connected = false;
 // Lista av nätverk
 String networks = "";
 
+int last_blink = 0;
+
 void setup() {
     Serial.begin(115200);
     Serial.println();
+
+    pinMode(LED_BUILTIN, OUTPUT);
 
     startEeprom();
     startOTA();
@@ -65,4 +69,12 @@ void loop() {
     ArduinoOTA.handle();
 
     handleHttp(server, connected, networks);
+
+    // Visa att vi lever
+    if (millis() - last_blink > 1000) {
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(100);
+        digitalWrite(LED_BUILTIN, HIGH);
+        last_blink = millis();
+    }
 }
