@@ -1,7 +1,15 @@
 #include <Arduino.h>
+#include "esp32platform_eeprom.h"
 
 void setup() {
-  // put your setup code here, to run once:
+    Serial.begin(115200);
+    Serial.println();
+
+    startEeprom();
+    String SSIDFromEeprom = SSIDFromEeprom();
+    String PwdFromEeprom = PwdFromEeprom();
+
+    
 }
 
 void loop() {
