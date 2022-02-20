@@ -2,9 +2,10 @@
 
 // Mina egna
 #include "esp32platform_eeprom.h"
+#include "esp32platform_http.h"
+#include "esp32platform_mqtt.h"
 #include "esp32platform_ota.h"
 #include "esp32platform_wifi.h"
-#include "esp32platform_mqtt.h"
 
 // Starta en webserver
 WiFiServer server(80);
@@ -36,12 +37,12 @@ void setup() {
         Serial.println("Setting up access point");
 
         WiFi.disconnect();
-        networks = scanNetworks();
+        networks = findNetworksNearby();
         setupAP();
     }
 
     server.begin();
-    Serial.println("Server started");
+    Serial.println("Web server started");
 }
 
 void loop() {
@@ -50,13 +51,14 @@ void loop() {
             Serial.println("Reconnecting mqttClient");
             reconnectMQTT();
         }
+
         mqttClient.loop();  // Loopar inte, ska bara köras i loopen
+        
+        ArduinoOTA.handle();
+        handleHttp(server, connected, "10.1.1.1", networks);
+
     } else {
         // Captive portal. Give our IP to everything
         dnsServer.processNextRequest();
     }
-
-    ArduinoOTA.handle();
-
-    WiFiClient client = server.available();
 }

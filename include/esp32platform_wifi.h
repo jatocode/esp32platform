@@ -74,7 +74,7 @@ void setupAP() {
     Serial.println("AP IP address: " + ipaddress);
 }
 
-String scanNetworks() {
+String findNetworksNearby() {
     Serial.println("scan start");
 
     // WiFi.scanNetworks will return the number of networks found
