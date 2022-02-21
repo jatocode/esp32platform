@@ -7,5 +7,7 @@ Trying to create a platform/base for a quick way of starting up new projects on 
 * Wifi with captive portal
 * MDNS
 * MQTT
+* OTA
 * Simple Webserver with html responds
 * EEPROM
+
