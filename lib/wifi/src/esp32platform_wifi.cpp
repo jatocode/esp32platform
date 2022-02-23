@@ -35,14 +35,14 @@ bool connectWifi(String ssid, String pass) {
     ipaddress = WiFi.localIP().toString();
     Serial.println("WiFi connected, IP address: " + ipaddress);
 
-    if (!MDNS.begin(mdnsname)) {
-        Serial.println("Error setting up MDNS responder!");
-    } else {
-        Serial.println("mDNS responder started, name:" + String(mdnsname) +
-                       ".local");
-        MDNS.addService("http", "tcp", 80);
-    }
-    ipaddress += " (" + String(mdnsname) + ".local)";
+    // if (!MDNS.begin(mdnsname)) {
+    //     Serial.println("Error setting up MDNS responder!");
+    // } else {
+    //     Serial.println("mDNS responder started, name:" + String(mdnsname) +
+    //                    ".local");
+    //     MDNS.addService("http", "tcp", 80);
+    // }
+    // ipaddress += " (" + String(mdnsname) + ".local)";
 
     return true;
 }
@@ -92,7 +92,7 @@ String findNetworksNearby() {
             Serial.print(" (");
             Serial.print(WiFi.RSSI(i));
             Serial.print(")");
-            Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " "
+            Serial.println((WiFi.encryptionType(i) == AUTH_OPEN) ? " "
                                                                       : "*");
             htmloptions += "<option>" + String(WiFi.SSID(i)) + "</option>";
             delay(10);

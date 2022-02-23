@@ -4,7 +4,7 @@
 #include "esp32platform_eeprom.h"
 #include "esp32platform_http.h"
 #include "esp32platform_mqtt.h"
-#include "esp32platform_ota.h"
+//#include "esp32platform_ota.h"
 #include "esp32platform_wifi.h"
 
 // Starta en webserver
@@ -29,7 +29,7 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
 
     startEeprom();
-    startOTA();
+   // startOTA();
 
     String savedSSID = SSIDFromEeprom();
     String savedPASS = PwdFromEeprom();
@@ -83,7 +83,7 @@ void wifiAndHttp() {
         dnsServer.processNextRequest();
     }
 
-    ArduinoOTA.handle();
+//    ArduinoOTA.handle();
 
     int status = handleHttp(server, connected, networks, &ssidpwd);
     if(status == REQUEST_RECONNECT) {

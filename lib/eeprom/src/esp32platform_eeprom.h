@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <EEPROM.h>
 
 #define EEPROM_SIZE 300
