@@ -9,7 +9,8 @@
 
 // Starta en webserver
 WiFiServer server(80);
-PubSubClient mqttClient;
+WiFiClient wifiClient;
+PubSubClient mqttClient(wifiClient);
 DNSServer dnsServer;
 void wifiAndHttp();
 
@@ -41,7 +42,6 @@ void setup() {
     if (connected) {
         Serial.print("Connected to wifi: ");
         Serial.println(savedSSID);
-        // mqttClient = setupMQTT();
     } else {
         // Start Access Point
         Serial.println("Setting up access point");
@@ -54,11 +54,11 @@ void setup() {
     server.begin();
     Serial.println("Web server started");
 
-    mqttClient = setupMQTT();
+    setupMQTT(&server, &mqttClient);
 }
 
 void loop() {
-    // Hantera allt med nätet  
+    // Hantera allt med nätet
     wifiAndHttp();
 
     // Gör något
@@ -74,13 +74,11 @@ void loop() {
 
 void wifiAndHttp() {
     if (connected) {
-        // if (!mqttClient.connected()) {
-        //     Serial.println("Reconnecting mqttClient");
-        //     reconnectMQTT(mqttClient);
-        // }
-
-        // Serial.println("looping mqtt");
-        // mqttClient.loop();  // Loopar inte, ska bara köras i loopen
+        if (!mqttClient.connected()) {
+            Serial.println("Reconnecting mqttClient");
+            reconnectMQTT(&mqttClient);
+        }
+        mqttClient.loop();  // Loopar inte, ska bara köras i loopen
     } else {
         // Captive portal. Give our IP to everything
         networks = findNetworksNearby();

@@ -26,7 +26,7 @@ bool connectWifi(String ssid, String pass) {
 
     while (i-- > 0 && WiFi.status() != WL_CONNECTED) {
         delay(1000);
-        Serial.print(".");
+        //Serial.print(".");
     }
     if (WiFi.status() != WL_CONNECTED) {
         Serial.println("Connection failed");
