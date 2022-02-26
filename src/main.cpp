@@ -81,7 +81,7 @@ void wifiAndHttp() {
         mqttClient.loop();  // Loopar inte, ska bara köras i loopen
     } else {
         // Captive portal. Give our IP to everything
-        networks = findNetworksNearby();
+        // networks = findNetworksNearby();
         dnsServer.processNextRequest();
     }
 
