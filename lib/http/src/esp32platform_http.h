@@ -51,4 +51,5 @@ const String apHtmlOutput =
 void writeOkHeader(WiFiClient client);
 void writeMainResponse(WiFiClient client);
 void writeAPResponse(WiFiClient client, String networks);
-int handleHttp(WiFiServer server, bool connected, String networks, struct ssid_pass *ssidpwd);
+int handleHttp(WiFiServer *server, bool connected, String networks, struct ssid_pass *ssidpwd);
+void wifiloop(WiFiServer *server);

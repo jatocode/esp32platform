@@ -8,8 +8,10 @@ const char *mqtt_server = "192.168.68.108";
 
 void mqttCallback(char *topic, byte *message, unsigned int length) {
     String messageTemp;
+    Serial.println("mqtt mess");
+    Serial.printf("Got something on: %s", topic);
 
-    for (int i = 0; i < length; i++) {
+    for (unsigned int i = 0; i < length; i++) {
         Serial.print((char)message[i]);
         messageTemp += (char)message[i];
     }
@@ -26,10 +28,12 @@ void reconnectMQTT(PubSubClient mqttClient) {
         clientId += String(random(0xffff), HEX);
         if (mqttClient.connect(clientId.c_str())) {
             Serial.println("mqtt connected");
-            String ipaddress = WiFi.localIP().toString();
-            String status = "{\"message\":\"I'm alive\", \"ip\":" + ipaddress + "}";
-            mqttClient.publish(TOPIC, status.c_str());
             mqttClient.subscribe(TOPIC_IN);
+
+            String ipaddress = WiFi.localIP().toString();
+            String status =
+                "{\"message\":\"I'm alive\", \"ip\":" + ipaddress + "}";
+            mqttClient.publish(TOPIC, status.c_str());
         } else {
             Serial.print("failed, rc=");
             Serial.print(mqttClient.state());
@@ -39,12 +43,13 @@ void reconnectMQTT(PubSubClient mqttClient) {
     }
 }
 
-void pubmqttstatus(PubSubClient mqttClient, String key, String msg, String card) {
+void pubmqttstatus(PubSubClient mqttClient, String key, String msg,
+                   String card) {
     String status =
         "{\"" + key + "\":\"" + msg + "\",\"card\":\"" + card + "\"}";
     char a[100];
     status.toCharArray(a, status.length() + 1);
-    
+
     mqttClient.publish(TOPIC, a, false);
 }
 
@@ -57,7 +62,15 @@ PubSubClient setupMQTT() {
     mqttClient.setServer(mqtt_server, 1883);
     mqttClient.setCallback(mqttCallback);
 
-    reconnectMQTT(mqttClient);
+    String clientId = CLIENTID;
+    clientId += String(random(0xffff), HEX);
+    if (mqttClient.connect(clientId.c_str())) {
+        Serial.println("mqtt connected");
+        String ipaddress = WiFi.localIP().toString();
+        String status = "{\"message\":\"I'm alive\", \"ip\":" + ipaddress + "}";
+        mqttClient.publish(TOPIC, status.c_str());
+        mqttClient.subscribe(TOPIC_IN);
+    }
 
     return mqttClient;
 }

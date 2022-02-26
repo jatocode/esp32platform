@@ -58,8 +58,73 @@ struct ssid_pass connectionRequest(String params) {
     return ssidpwd;
 }
 
-int handleHttp(WiFiServer server, bool connected, String networks, struct ssid_pass *ssidpwd) {
-    WiFiClient client = server.available();
+String prepareMainPage() {
+    String htmlPage;
+    htmlPage.reserve(2048);  // prevent ram fragmentation
+    htmlPage = F(
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/html\r\n"
+        "Connection: close\r\n"
+        "\r\n"
+        "<!DOCTYPE html><html><head>		<title>ESP32</title>	"
+        "	<link rel=\"stylesheet\" "
+        "href=\"https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/"
+        "mini-default.min.css\">		<style>.button.large "
+        "{text-align:center;padding:2em ; margin: "
+        "1em;font-size:2em;color:black}</style></head><body>		<h1 "
+        "align=\"center\">ESP32 action</h1>		<br/><br/>	"
+        "	<div "
+        "class=\"row cols-sm-10\">				<a "
+        "class=\"button "
+        "large\" onClick='run(\"A\")' href=\"#\">Blink LED</a>		"
+        "		<a class=\"button large\" onClick='run(\"B\")' "
+        "href=\"#\">V&aring;gform: <span id=\"wave\">%WAVE%</span></a>	"
+        "	</div>		<div><small>Connected to WiFi: "
+        "%WIFI%</small></div>		<script>			"
+        "	async function run(param) {				"
+        "	"
+        "	let result = await fetch('/' + param);	let r = await "
+        "result.json(); "
+        "document.getElementById('wave').innerHTML = r.wave; "
+        "console.log(r);					/* Use result "
+        "for "
+        "something - or not */				}		"
+        "</script>		</body></html>");
+    htmlPage += "\r\n";
+    return htmlPage;
+}
+
+void wifiloop(WiFiServer *server) {
+    WiFiClient client = server->available();  // server.accept();
+    // wait for a client (web browser) to connect
+    if (client) {
+        Serial.println("\n[Client connected]");
+        while (client.connected()) {
+            // read line by line what the client (web browser) is requesting
+            if (client.available()) {
+                String line = client.readStringUntil('\r');
+                Serial.print(line);
+                // wait for end of client's request, that is marked with an
+                // empty line
+                if (line.length() == 1 && line[0] == '\n') {
+                    client.println(prepareMainPage());
+                    break;
+                }
+            }
+        }
+
+        while (client.available()) {
+            client.read();
+        }
+
+        // close the connection:
+        client.stop();
+        Serial.println("[Client disconnected]");
+    }
+}
+
+int handleHttp(WiFiServer *server, bool connected, String networks, struct ssid_pass *ssidpwd) {
+    WiFiClient client = server->available();
 
     int status = REQUEST_OK;
 
@@ -89,13 +154,13 @@ int handleHttp(WiFiServer server, bool connected, String networks, struct ssid_p
                                 5, currentLine.length() - 9);
                             switch (path[0]) {
                                 case 'A':
-                                    Serial.println("I'm doing a thing");
+                                    Serial.println("GET A");
                                     client.println("HTTP/1.1 200 OK");
                                     client.println(
                                         "Content-type:application/json");
+                                    client.println("{\"A\":\"OK\"}");
                                     client.println();
                                     client.println();
-                                    client.stop();
                                     break;
                                 case 'C':
                                     *ssidpwd = connectionRequest(path);
