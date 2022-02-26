@@ -1,5 +1,3 @@
-#include <WiFiClient.h>
-#include <WiFiServer.h>
 #include <ESP8266WiFi.h>
 
 #define REQUEST_OK 0

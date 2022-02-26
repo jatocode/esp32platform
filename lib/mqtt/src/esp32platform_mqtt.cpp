@@ -53,8 +53,11 @@ PubSubClient setupMQTT() {
     PubSubClient mqttClient(client);
 
     Serial.println("Configuring MQTT server");
+    Serial.println(mqtt_server);
     mqttClient.setServer(mqtt_server, 1883);
     mqttClient.setCallback(mqttCallback);
+
+    reconnectMQTT(mqttClient);
 
     return mqttClient;
 }
