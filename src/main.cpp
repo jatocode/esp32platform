@@ -13,6 +13,7 @@ WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
 DNSServer dnsServer;
 void wifiAndHttp();
+void setupWifiAndHttp();
 
 // wifi connection status
 bool connected = false;
@@ -29,7 +30,26 @@ void setup() {
 
     pinMode(LED_BUILTIN, OUTPUT);
 
-    startEeprom();
+    setupWifiAndHttp();
+}
+
+void loop() {
+    // Hantera allt med nätet
+    wifiAndHttp();
+
+    // Gör något
+
+    // Visa att vi lever
+    if (millis() - last_blink > 1000) {
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(100);
+        digitalWrite(LED_BUILTIN, HIGH);
+        last_blink = millis();
+    }
+}
+
+void setupWifiAndHttp() {
+   startEeprom();
     
     String savedSSID = SSIDFromEeprom();
     String savedPASS = PwdFromEeprom();
@@ -55,21 +75,6 @@ void setup() {
 
     startOTA();
 
-}
-
-void loop() {
-    // Hantera allt med nätet
-    wifiAndHttp();
-
-    // Gör något
-
-    // Visa att vi lever
-    if (millis() - last_blink > 1000) {
-        digitalWrite(LED_BUILTIN, LOW);
-        delay(100);
-        digitalWrite(LED_BUILTIN, HIGH);
-        last_blink = millis();
-    }
 }
 
 void wifiAndHttp() {
